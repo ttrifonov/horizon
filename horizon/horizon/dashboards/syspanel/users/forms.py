@@ -23,7 +23,7 @@ import logging
 from django import shortcuts
 from django.contrib import messages
 from django.utils.translation import ugettext as _
-
+from django.core.validators import validate_email
 from horizon import api
 from horizon import exceptions
 from horizon import forms
@@ -87,8 +87,9 @@ class UpdateUserForm(BaseUserForm):
     id = forms.CharField(label=_("ID"),
             widget=forms.TextInput(attrs={'readonly': 'readonly'}))
     # FIXME: keystone doesn't return the username from a get API call.
-    #name = forms.CharField(label=_("Name"))
-    email = forms.CharField(label=_("Email"))
+    name = forms.CharField(label=_("Name"))
+    email = forms.CharField(label=_("Email"),
+                            validators=[validate_email])
     password = forms.CharField(label=_("Password"),
                                widget=forms.PasswordInput(render_value=False),
                                required=False)
