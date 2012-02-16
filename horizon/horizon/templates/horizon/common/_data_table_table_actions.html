@@ -1,8 +1,9 @@
+{% load i18n %}
 <div class="table_actions clearfix">
 {% if filter %}
     <div class="table_search">
-        <input class="span3 example" value="{{ filter.filter_string|default:'' }}" type="text" name="{{ filter.get_param_name }}" />
-        <button type="submit" class="btn small filter">Filter</button>
+        <input class="span3 example filter-value" value="{{ filter.filter_string|default:'' }}" type="text" name="{{ filter.get_param_name }}" />
+        <button type="submit" class="btn small filter{% if filter.method == "GET" %} filter-link{% endif %}" value-data="{{ filter.get_param_name }}">{% trans "Filter" %}</button>
     </div>
 {% endif %}
 {% for action in table_actions %}
@@ -15,3 +16,27 @@
     {% endif %}
 {% endfor %}
 </div>
+
+<script>
+$(document).ready(function(){
+    $('input.filter-value').keypress(function(e){
+        var key=e.keyCode || e.which;
+        if (key == 13){
+            $(this).next().click();
+            return false;
+        }
+    });
+    $('button.filter-link').click(function(){
+    	var f_name = $(this).attr('value-data');
+    	var input = $('input[name='+f_name+']');
+    	var val = input.val();
+    	if (val == "{% trans "Filter" %}"){
+    	   input.focus();
+    	   return false;
+    	}
+    	var path  = ['{{ request.path }}', '?', f_name, '=', val];
+    	window.location.href = path.join("");
+    	return false;
+    });
+});
+</script>

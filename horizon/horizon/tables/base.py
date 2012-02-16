@@ -620,7 +620,11 @@ class DataTable(object):
             action.table = self
         if self._meta._filter_action:
             param_name = self._meta._filter_action.get_param_name()
-            q = self._meta.request.POST.get(param_name, '')
+            if (self._meta._filter_action.method == "GET" and
+                    self._meta.request.GET): # fall-back to POST
+                q = self._meta.request.GET.get(param_name, '')
+            else:
+                q = self._meta.request.POST.get(param_name, '')
             self._meta._filter_action.filter_string = q
 
     def __unicode__(self):
